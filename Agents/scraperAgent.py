@@ -57,13 +57,18 @@ class scraperAgent(baseAgent):
         
         dressResults = executeBase(text)
         
-        print('DRESS RESULTS',dressResults)
+        # print('DRESS RESULTS',dressResults)
         
         
         
         return {
             "dressResults" : dressResults,
-            "dress_types" : dress_types_list
+            "dress_types" : dress_types_list,
+            "gender" : gender,
+             "price range" : {
+                "min_range" : min_range,
+                "max_range" : max_range
+            }
         }
         
         

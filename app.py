@@ -1,6 +1,8 @@
 import streamlit as st
 import asyncio
 from Agents.orchestratorAgent import orchestratorAgent
+from Agents.orchestrator2Agent import orchestrator2Agent
+
 import os
 
 st.set_page_config(page_title="Ask advices", layout="centered")
@@ -16,6 +18,16 @@ async def process_query(user_input):
         return await orchestrator.run([{"role": "user", "content": user_input}])
     except Exception as e:
         return {"error": str(e)}
+    
+async def process_secondhalf(user_input):
+    try:
+        
+        orchestrator2 = orchestrator2Agent()
+        return await orchestrator2.run([{"role": "user", "content": user_input}])
+        
+    except Exception as e:
+        return {"error" : str(e)}
+        
 
 # --- SIDEBAR NAVIGATION ---
 with st.sidebar:
@@ -79,9 +91,9 @@ if st.session_state.page == "Show Images":
             for item in dress_items:
                 item_filename = item.strip().lower().replace(' ', '_') + '.jpg'
                 img_path = os.path.join(".", "Outputs", "dress_type_images", item_filename)
-                print(f"Looking for: {img_path}")  # Debug print
+                # print(f"Looking for: {img_path}")  
                 item_paths.append((item, img_path))
-            print('ITEM PATHS',item_paths)
+            # print('ITEM PATHS',item_paths)
             if all(os.path.exists(path) for _, path in item_paths):
                 st.markdown(f"**Outfit {idx+1}:**")
                 checked = st.checkbox(
@@ -95,5 +107,13 @@ if st.session_state.page == "Show Images":
                 if checked:
                     selected_images.append([item for item, _ in item_paths])
         if st.button("Send similar outfits"):
-            st.json(selected_images)
+            print('SELECTED IMAGES : ',selected_images)
+            
+            # st.json(selected_images)
+            # st.json(selected_images)
+            result2 = asyncio.run(process_secondhalf(selected_images))
+            # print('RESULT2', result2)
+            st.json(result2["messages"][-1].get("content"))
+            
+            
 

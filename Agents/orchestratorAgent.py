@@ -17,11 +17,11 @@ class orchestratorAgent(baseAgent):
         
     async def run(self,messages:list):
         
-        print('MESSAGES',messages)
+        # print('MESSAGES',messages)
         
         dress_types = await self.dressType.run(messages)
         
-        print('DRESS TYPES',dress_types)
+        # print('DRESS TYPES',dress_types)
         
         scraped_content = await self.scraper.run([{
             "role" :"user",
