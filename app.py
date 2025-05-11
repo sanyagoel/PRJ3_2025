@@ -1,6 +1,7 @@
 import streamlit as st
 import asyncio
 from Agents.orchestratorAgent import orchestratorAgent
+import os
 
 st.set_page_config(page_title="Ask advices", layout="centered")
 
@@ -20,21 +21,15 @@ async def process_query(user_input):
 with st.sidebar:
     st.title("🧑‍💼 Event Advisor")
     st.write("Get personalized advice for your next event.")
-    # Navigation button for this page
     if st.button("Ask advices", key="nav_ask_advices"):
         st.session_state.page = "Ask advices"
 
-# --- MAIN PAGE ---
+# --- PAGE 1: Ask advices ---
 if st.session_state.page == "Ask advices":
     st.header("🎯 Ask for Event Advice")
 
-    # --- IMAGE UPLOAD ---
     uploaded_image = st.file_uploader("Upload an image (optional)", type=["jpg", "jpeg", "png"], key="event_image")
-
-    # --- USER QUERY ---
     event_type = st.text_input("What type of event are you going to?", key="event_type")
-
-    # --- PRICE RANGE SLIDER ---
     price_range = st.slider(
         "Select your preferred price range",
         min_value=0,
@@ -43,11 +38,8 @@ if st.session_state.page == "Ask advices":
         step=100,
         key="price_range"
     )
-
-    # --- GENDER INPUT ---
     gender = st.text_input("What is your gender?", key="gender")
 
-    # --- SUBMIT BUTTON ---
     if st.button("Get Advice", key="submit_advice"):
         if not event_type.strip():
             st.warning("Please specify the event type.")
@@ -71,4 +63,37 @@ if st.session_state.page == "Ask advices":
                 st.error(result["error"])
             else:
                 st.success("Here's your personalized advice!")
-                st.write(result.get("dresstypes"))
+                # Save results in session state and switch to next page
+                st.session_state.page = "Show Images"
+                st.session_state.dress_types = result.get("scraped_content").get("dress_types", [])
+
+
+import os
+
+if st.session_state.page == "Show Images":
+    st.header("🖼️ Select Your Favorite Outfits")
+    selected_images = []
+    if "dress_types" in st.session_state:
+        for idx, dress_items in enumerate(st.session_state.dress_types):
+            item_paths = []
+            for item in dress_items:
+                item_filename = item.strip().lower().replace(' ', '_') + '.jpg'
+                img_path = os.path.join(".", "Outputs", "dress_type_images", item_filename)
+                print(f"Looking for: {img_path}")  # Debug print
+                item_paths.append((item, img_path))
+            print('ITEM PATHS',item_paths)
+            if all(os.path.exists(path) for _, path in item_paths):
+                st.markdown(f"**Outfit {idx+1}:**")
+                checked = st.checkbox(
+                    ", ".join(item for item, _ in item_paths),
+                    key=f"checkbox_outfit_{idx}"
+                )
+                cols = st.columns(len(item_paths))
+                for col, (item, path) in zip(cols, item_paths):
+                    with col:
+                        st.image(path, caption=item, width=150)
+                if checked:
+                    selected_images.append([item for item, _ in item_paths])
+        if st.button("Send similar outfits"):
+            st.json(selected_images)
+
