@@ -78,6 +78,8 @@ if st.session_state.page == "Ask advices":
                 # Save results in session state and switch to next page
                 st.session_state.page = "Show Images"
                 st.session_state.dress_types = result.get("scraped_content").get("dress_types", [])
+                st.session_state.gender_result = result.get("scraped_content").get("gender")
+                st.session_state.price_range2 = result.get("scraped_content").get("price range")
 
 
 import os
@@ -108,12 +110,22 @@ if st.session_state.page == "Show Images":
                     selected_images.append([item for item, _ in item_paths])
         if st.button("Send similar outfits"):
             print('SELECTED IMAGES : ',selected_images)
+
+   # min_range = content["price_range"][0]
+        # max_range = content["price_range"][1]
+        # gender = content["gender"]
+        # selected_list = content["selected_dresses"]
+            content = {
+                "price_range" : st.session_state.price_range2,
+                "gender" : st.session_state.gender_result,
+                "selected_dresses" : selected_images
+            }
             
             # st.json(selected_images)
             # st.json(selected_images)
-            result2 = asyncio.run(process_secondhalf(selected_images))
+            result2 = asyncio.run(process_secondhalf(content))
             # print('RESULT2', result2)
-            st.json(result2["messages"][-1].get("content"))
+            st.json(result2)
             
             
 

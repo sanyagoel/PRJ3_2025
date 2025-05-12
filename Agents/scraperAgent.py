@@ -1,7 +1,7 @@
 from .baseAgent import baseAgent
 import ast
 
-from Scraper.baseScraper import executeBase
+from WebScraping.baseScraper import executeBase
 
 class scraperAgent(baseAgent):
     
