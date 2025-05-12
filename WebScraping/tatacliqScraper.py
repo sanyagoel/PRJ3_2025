@@ -32,7 +32,7 @@ def setup_tatacliq_driver(text,output_folder,logger,gender_query,mini,maxi):
                     print(f"URL: {url}")
                     driver.get(url)
                     logger.info(f"Tata CLiQ page loaded for {x}")
-                    results.append(tatacliq_extract(drive,logger))
+                    results.append(tatacliq_extract(driver,logger))
                     main_results.append(results)
         print(main_results)
         quit(driver)
