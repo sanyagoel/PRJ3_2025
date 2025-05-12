@@ -92,7 +92,7 @@ def scrape_first_3_reviews_flipkart(url):
         
     review_elements = driver.find_elements(By.CSS_SELECTOR, "div._11pzQk")
     review_texts = [elem.text for elem in review_elements[:3]]
-
+    
 
 
     reviews_data.append({
