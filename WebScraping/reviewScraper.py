@@ -130,7 +130,8 @@ def scrape_first_3_reviews_myntra(url):
 
 
 def scrape_first_3_reviews_tatacliq(url):
-    
+    from selenium.common.exceptions import TimeoutException, NoSuchElementException
+
     cService = webdriver.ChromeService(executable_path=CHROMEDRIVER_PATH)
     driver = webdriver.Chrome(service=cService)
     driver.get(url)
@@ -138,38 +139,38 @@ def scrape_first_3_reviews_tatacliq(url):
     
     reviews_data = []
 
-    
+    # Scroll down the page to load dynamic content
     for _ in range(8):
         driver.execute_script("window.scrollBy(0, window.innerHeight / 2);")
         time.sleep(1)
 
-    wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="root"]/div/div[3]/div/div[2]/div/div/div[2]')))
+    try:
+        # Try to get the overall rating
+        rating_elem = wait.until(
+            EC.presence_of_element_located((By.XPATH, '//*[@id="root"]/div/div[3]/div/div[2]/div/div/div[2]/div[2]/div[1]/div[1]/div[1]'))
+        )
+        rating = rating_elem.text.strip() or "no rating available"
+    except (TimeoutException, NoSuchElementException):
+        rating = "no rating available"
 
-    # rating_elem = driver.find_element(By.CLASS_NAME, "RatingAndIconComponent__ratingText")
-    
-    rating_elem = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.XPATH, '//*[@id="root"]/div/div[3]/div/div[2]/div/div/div[2]/div[2]/div[1]/div[1]/div[1]'))
-    )
-    rating = rating_elem.text
-
-    time.sleep(2)    
-    # wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="root"]/div/div[3]/div/div[2]/div/div/div[2]')))
-    # time.sleep(1) 
-
-
-
-    review_elements = driver.find_elements(By.CLASS_NAME, "ReviewPage__text")
-    review_texts = [elem.text for elem in review_elements]
-
+    try:
+        # Try to get reviews
+        review_elements = driver.find_elements(By.CLASS_NAME, "ReviewPage__text")
+        review_texts = [elem.text.strip() for elem in review_elements if elem.text.strip()]
+        if not review_texts:
+            review_texts = ["no review available"]
+    except Exception:
+        review_texts = ["no review available"]
 
     reviews_data.append({
         "url": url,
         "review": review_texts,
         "rating": rating
     })
+
     driver.quit()
     return reviews_data
-    
+
 
     
 def combine_all(scraped_data):
