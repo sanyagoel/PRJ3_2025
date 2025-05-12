@@ -35,7 +35,7 @@ def setup_tatacliq_driver(text,output_folder,logger,gender_query,mini,maxi):
                     results.append(tatacliq_extract(driver,logger))
                     main_results.append(results)
         print(main_results)
-        quit(driver)
+        driver.quit()
         return driver, main_results
 
     except Exception as e:

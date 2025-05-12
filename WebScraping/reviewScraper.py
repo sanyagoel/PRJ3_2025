@@ -140,7 +140,7 @@ def scrape_first_3_reviews_tatacliq(url):
     reviews_data = []
 
     # Scroll down the page to load dynamic content
-    for _ in range(8):
+    for _ in range(6):
         driver.execute_script("window.scrollBy(0, window.innerHeight / 2);")
         time.sleep(1)
 
