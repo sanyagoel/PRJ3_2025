@@ -25,5 +25,5 @@ class orchestrator2Agent(baseAgent):
         print('\n\n\n\n RESULT 2',result2)
     
         return {
-            "messages" : result2
+            "messages" : result2,
         }

@@ -48,7 +48,7 @@ logging.basicConfig(filename="bot_log.log",format="%(asctime)s - %(message)s",le
 logger=logging.getLogger()
 
 #setting up driver and opening chrome 
-def setup_driver(text, output_folder):
+def setup_driver(text, output_folder,gender_query):
     try:
         # # Prepare gender and price query
         # if text["gender"] == "F":
@@ -71,7 +71,7 @@ def setup_driver(text, output_folder):
                     driver = webdriver.Chrome(options=chrome_options)
                     driver.maximize_window()
                     # --- Build the full Myntra URL with filters ---
-                    url = f"https://www.myntra.com/{x}"
+                    url = f"https://www.myntra.com/{x}?&{gender_query}"
                     driver.get(url)
                     logger.info(f"Page loaded: {url}")
                     pic_extract(driver, x, output_folder, text)
@@ -83,7 +83,7 @@ def setup_driver(text, output_folder):
                 chrome_options.add_experimental_option('prefs', prefs)
                 driver = webdriver.Chrome(options=chrome_options)
                 driver.maximize_window()
-                url = f"https://www.myntra.com/{dress}"
+                url = f"https://www.myntra.com/{dress}?&{gender_query}"
                 driver.get(url)
                 logger.info(f"Page loaded: {url}")
                 pic_extract(driver, dress, output_folder, text)
@@ -146,13 +146,13 @@ def executeBase(text):
         dress_query.append(i)
         # print(i)
 
-    # if text["gender"]=="F":
-    #     gender_query="f=Gender%3Amen%20women%2Cwomen"
-    # else:
-    #     gender_query="f=Gender%3Aboys%2Cboys%20girls"
+    if text["gender"]=="F":
+        gender_query="f=Gender%3Amen%20women%2Cwomen"
+    else:
+        gender_query="f=Gender%3Aboys%2Cboys%20girls"
         
     # mini=text["price range"]["min_range"]
     # maxi=text["price range"]["max_range"]
     # price_query= f"rf=Price%3A{mini}.0_{maxi}.0_{mini}.0%20TO%20{maxi}.0"
     
-    setup_driver(text, output_folder)
+    setup_driver(text, output_folder,gender_query)

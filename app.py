@@ -6,6 +6,52 @@ from Agents.orchestrator2Agent import orchestrator2Agent
 import os
 
 st.set_page_config(page_title="Ask advices", layout="centered")
+# Custom CSS styles
+st.markdown("""
+    <style>
+    /* Sidebar background */
+    [data-testid="stSidebar"] {
+        background: linear-gradient(135deg, #FFDEE9 0%, #B5FFFC 100%);
+        color: #000000;
+    }
+
+    /* Sidebar title */
+    .sidebar .css-1d391kg {
+        font-size: 24px;
+        color: #5B2C6F;
+        font-weight: bold;
+    }
+
+    /* Buttons */
+    .stButton > button {
+        background-color: #FF69B4;
+        color: white;
+        border-radius: 8px;
+        border: none;
+        padding: 0.5rem 1rem;
+        font-weight: bold;
+        transition: background-color 0.3s;
+    }
+
+    .stButton > button:hover {
+        background-color: #FF1493;
+        color: #fff;
+    }
+
+    /* Input boxes */
+    .stTextInput > div > div > input {
+        background-color: #F0F8FF;
+        border: 2px solid #87CEFA;
+        border-radius: 8px;
+    }
+
+    .stSlider > div > div {
+        background-color: #E6E6FA;
+        border-radius: 10px;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 
 # --- PAGE NAVIGATION (for multipage setup) ---
 if "page" not in st.session_state:

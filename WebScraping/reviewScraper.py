@@ -140,8 +140,8 @@ def scrape_first_3_reviews_tatacliq(url):
     reviews_data = []
 
     # Scroll down the page to load dynamic content
-    for _ in range(6):
-        driver.execute_script("window.scrollBy(0, window.innerHeight / 2);")
+    for _ in range(3):
+        driver.execute_script("window.scrollBy(0, window.innerHeight / 3);")
         time.sleep(1)
 
     try:
@@ -210,7 +210,9 @@ def combine_all(scraped_data):
                     batch_reviews.append({
                         "url": url,
                         "review": review.get("review", []),
-                        "rating": review.get("rating", "no rating available")
+                        "rating": review.get("rating", "no rating available"),
+                        "image_url" : item[0].get("image_url")
+                        
                     })
 
             platform_reviews.append(batch_reviews)
