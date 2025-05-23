@@ -3,6 +3,11 @@ import asyncio
 from Agents.orchestratorAgent import orchestratorAgent
 from Agents.orchestrator2Agent import orchestrator2Agent
 
+import requests
+from PIL import Image
+from io import BytesIO
+
+
 import os
 
 st.set_page_config(page_title="Ask advices", layout="centered")
@@ -73,6 +78,58 @@ async def process_secondhalf(user_input):
         
     except Exception as e:
         return {"error" : str(e)}
+    
+
+def show_Products(brand, product_lists):
+    if not product_lists:
+        return
+
+    st.markdown(f"### 🧾 Results from **{brand.capitalize()}**")
+
+    cols = st.columns(3)
+    index = 0
+
+    for group in product_lists:
+        for product in group:
+            if index >= 5:
+                break
+
+            with cols[index % 3]:
+                with st.container(border=True):
+                    img_url = product.get('image_url')
+                    if img_url:
+                        try:
+                            img_data = requests.get(img_url).content
+                            img = Image.open(BytesIO(img_data))
+                            st.image(img, use_container_width=True)
+                        except:
+                            st.warning("Image unavailable")
+
+                    st.markdown(f"**{product.get('name', 'Unnamed Product')}**")
+                    st.markdown(f"Description ->  \n {product.get('description')}", unsafe_allow_html=True)
+
+                    price = product.get('price', 'N/A')
+                    rating = product.get('rating')
+                    st.markdown(f"💰 {price}" + (f" | ⭐ {rating}" if rating else ""))
+
+                    if product.get('url'):
+                        st.markdown(f"[View Product 🔎]({product['url']})", unsafe_allow_html=True)
+
+                    reviews = [
+                        r.strip() for r in product.get('review', [])
+                        if r.strip() and "no review" not in r.lower()
+                    ]
+                    if reviews:
+                        with st.expander("🗨 Reviews"):
+                            for r in reviews:
+                                st.markdown(f"- {r}")
+
+            index += 1
+
+    st.markdown("---")
+
+
+
         
 
 # --- SIDEBAR NAVIGATION ---
@@ -170,8 +227,27 @@ if st.session_state.page == "Show Images":
             # st.json(selected_images)
             # st.json(selected_images)
             result2 = asyncio.run(process_secondhalf(content))
-            # print('RESULT2', result2)
-            st.json(result2)
+            print('RESULT2', result2)
+            if "messages" in result2:
+                messages = result2["messages"]
+                if "myntra" in messages or "flipkart" in messages or "tata" in messages:
+                    st.success("Here are some similar outfits:")
+
+                    if "myntra" in messages:
+                        show_Products("Myntra", messages["myntra"])
+
+                    if "flipkart" in messages:
+                        show_Products("Flipkart", messages["flipkart"])
+
+                    if "tata" in messages:
+                        show_Products("Tata CLiQ", messages["tata"])
+                else:
+                    st.warning("Could not find similar products.")
+            else:
+                st.warning("No messages found in result.")
+
+
+
             
             
 
