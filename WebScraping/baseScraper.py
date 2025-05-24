@@ -137,7 +137,7 @@ def pic_extract(driver,x, output_folder, text):
 
 def executeBase(text):
     
-    output_folder = "./Outputs/dress_type_images"
+    output_folder = "Outputs/dress_type_images"
     os.makedirs(output_folder, exist_ok=True)
 
     #setting up logging for keeping a track of all the the events when this program runs
