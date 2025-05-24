@@ -10,6 +10,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+from Models.db_connection import db
+import base64
+
+images_data = db['images_data']
+
 # # Setup paths
 # output_folder = "dress_type_images"
 # os.makedirs(output_folder, exist_ok=True)
@@ -105,11 +110,17 @@ def pic_extract(driver,x, output_folder, text):
         image_url = image_element.get_attribute("src")
         if image_url:
             img_data = requests.get(image_url).content
-            filename = f"{output_folder}/{x.lower().replace(' ', '_')}.jpg"
-            with open(filename, "wb") as f:
-                f.write(img_data)
-                logger.info(f"Downloaded image for: {x}")
-                print(f"Downloaded image for: {x}")
+            image_base64 = base64.b64encode(img_data).decode('utf-8')
+
+            # Insert into MongoDB
+            doc = {
+                "dress_type": x,
+                "image": image_base64
+            }
+            images_data.insert_one(doc)
+            logger.info(f"Downloaded and saved image for: {x}")
+            print(f"Downloaded and saved image for: {x}")
+            
         else:
             logger.error(f"No image found for: {x}")
             print(f"No image found for: {x}")

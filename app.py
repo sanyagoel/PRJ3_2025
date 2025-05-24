@@ -6,6 +6,10 @@ from Agents.orchestrator2Agent import orchestrator2Agent
 import requests
 from PIL import Image
 from io import BytesIO
+import base64
+
+from Models.db_connection import db
+images_data = db['images_data']
 
 
 import os
@@ -192,25 +196,28 @@ if st.session_state.page == "Show Images":
     selected_images = []
     if "dress_types" in st.session_state:
         for idx, dress_items in enumerate(st.session_state.dress_types):
-            item_paths = []
+            item_images = []
             for item in dress_items:
-                item_filename = item.strip().lower().replace(' ', '_') + '.jpg'
-                img_path = os.path.join(".", "Outputs", "dress_type_images", item_filename)
-                # print(f"Looking for: {img_path}")  
-                item_paths.append((item, img_path))
-            # print('ITEM PATHS',item_paths)
-            if all(os.path.exists(path) for _, path in item_paths):
+                doc = images_data.find_one({"dress_type": item})
+                if doc and "image" in doc:
+                    img_bytes = base64.b64decode(doc["image"])
+                    img_buffer = BytesIO(img_bytes)
+                    item_images.append((item, img_buffer))
+                else:
+                    item_images.append((item, None))
+
+            if all(img is not None for _, img in item_images):
                 st.markdown(f"**Outfit {idx+1}:**")
                 checked = st.checkbox(
-                    ", ".join(item for item, _ in item_paths),
+                    ", ".join(item for item, _ in item_images),
                     key=f"checkbox_outfit_{idx}"
                 )
-                cols = st.columns(len(item_paths))
-                for col, (item, path) in zip(cols, item_paths):
+                cols = st.columns(len(item_images))
+                for col, (item, img_buffer) in zip(cols, item_images):
                     with col:
-                        st.image(path, caption=item, width=150)
+                        st.image(img_buffer, caption=item, width=150)
                 if checked:
-                    selected_images.append([item for item, _ in item_paths])
+                    selected_images.append([item for item, _ in item_images])
         if st.button("Send similar outfits"):
             print('SELECTED IMAGES : ',selected_images)
 
