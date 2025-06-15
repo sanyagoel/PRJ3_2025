@@ -1,6 +1,5 @@
 
 
-````markdown
 # 🕉️ Valmiki Ramayana Translation Verifier
 
 This project checks if a user-submitted English translation of a verse from the *Valmiki Ramayana* is **factually correct**, **incorrect**, or **irrelevant**.  
@@ -8,7 +7,7 @@ It uses semantic search, reranking, and a local LLM to return structured outputs
 
 ---
 
-## 🛠️ Features
+##  Features
 
 - Extracts English verses from [valmikiramayan.net](http://www.valmikiramayan.net)
 - Chunks and embeds verses for semantic search
@@ -19,7 +18,7 @@ It uses semantic search, reranking, and a local LLM to return structured outputs
 
 ---
 
-## 🧪 Setup Instructions
+##  Setup Instructions
 
 
 1. Make sure the following files are in the root folder: 
@@ -42,7 +41,7 @@ It uses semantic search, reranking, and a local LLM to return structured outputs
 
 ---
 
-## 🔍 Project Pipeline
+##  Project Pipeline
 
 ### 1. Data Extraction (via Selenium)
 
@@ -95,7 +94,7 @@ It uses semantic search, reranking, and a local LLM to return structured outputs
 
 ---
 
-## 🤖 Model Choices & Rationale
+##  Model Choices & Rationale
 
 | Stage     | Model                                                  | Why Chosen                                                |
 | --------- | ------------------------------------------------------ | --------------------------------------------------------- |
@@ -106,7 +105,7 @@ It uses semantic search, reranking, and a local LLM to return structured outputs
 
 ---
 
-## ❌ Models We Tried But Rejected
+##  Models We Tried But Rejected
 
 ### Embeddings:
 
@@ -125,7 +124,7 @@ It uses semantic search, reranking, and a local LLM to return structured outputs
 
 ---
 
-## 🔮 Future Improvements
+##  Future Improvements
 
 * Try newer and faster embedding models for better precision.
 * Improve UI of the Streamlit app version.
@@ -134,7 +133,7 @@ It uses semantic search, reranking, and a local LLM to return structured outputs
 
 ---
 
-## 🧾 Output Sample
+##  Output Sample
 
 ```json
 {
@@ -146,8 +145,6 @@ It uses semantic search, reranking, and a local LLM to return structured outputs
 ```
 
 ---
-
-## 🧑‍💻 Authors & Credits
 
 This project was built using:
 
