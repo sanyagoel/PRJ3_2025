@@ -24,7 +24,7 @@ It uses semantic search, reranking, and a local LLM to return structured outputs
 1. Make sure the following files are in the root folder: 
 
    * `valmiki_ramayana_dataset.xlsx`
-   * `ramayana.py`
+   * `ramayana_predictions.py`
    * `requirements.txt`
 
 2. Install dependencies: 
@@ -36,10 +36,13 @@ It uses semantic search, reranking, and a local LLM to return structured outputs
 3. Run the project: 
 
    ```bash
-   python ramayana.py
+   python ramayana_predictions.py
    ```
+4. For Data Scraping:
+   Just run all the cells of the python notebook. 
 
 ---
+
 
 ##  Project Pipeline
 
