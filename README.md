@@ -1,5 +1,3 @@
-
-
 # 🕉️ Valmiki Ramayana Translation Verifier
 
 This project checks if a user-submitted English translation of a verse from the *Valmiki Ramayana* is **factually correct**, **incorrect**, or **irrelevant**.  
@@ -7,7 +5,7 @@ It uses semantic search, reranking, and a local LLM to return structured outputs
 
 ---
 
-##  Features
+## Features
 
 - Extracts English verses from [valmikiramayan.net](http://www.valmikiramayan.net)
 - Chunks and embeds verses for semantic search
@@ -18,40 +16,43 @@ It uses semantic search, reranking, and a local LLM to return structured outputs
 
 ---
 
-##  Setup Instructions
-
+## Setup Instructions
 
 1. Make sure the following files are in the root folder: 
-
    * `valmiki_ramayana_dataset.xlsx`
    * `ramayana_predictions.py`
    * `requirements.txt`
 
 2. Install dependencies: 
-
    ```bash
    pip install -r requirements.txt
    ```
 
-3. Run the project: 
+3. Install and set up Ollama (Windows):
+   - Download and install Ollama:  
+     👉 https://ollama.com/download  
+   - After installing, open **Command Prompt** and run:
+     ```bash
+     ollama pull llama3.2:latest
+     ```
 
+4. Run the project: 
    ```bash
    python ramayana_predictions.py
    ```
-4. For Data Scraping:
-   Just run all the cells of the python notebook. 
+
+5. For Data Scraping:  
+   Just run all the cells of the provided Python notebook.
 
 ---
 
-
-##  Project Pipeline
+## Project Pipeline
 
 ### 1. Data Extraction (via Selenium)
 
 * Navigates to `valmikiramayan.net` and switches to the `main` frame.
 * Extracts all Book (Kanda) and Chapter (Sarga) links.
 * For each verse:
-
   * Extracts the verse number and English translation.
   * Handles different HTML formats across books using custom logic and regex.
 * Saves all verse data into `valmiki_ramayana_dataset.xlsx`.
@@ -75,11 +76,9 @@ It uses semantic search, reranking, and a local LLM to return structured outputs
 ### 5. Fact-Checking using LLM
 
 * Prompts LLaMA 3 with:
-
   * Top 6 relevant chunks
   * User translation to evaluate
 * Returns structured JSON:
-
   ```json
   {
     "prediction": "correct/incorrect/irrelevant",
@@ -97,68 +96,11 @@ It uses semantic search, reranking, and a local LLM to return structured outputs
 
 ---
 
-##  Model Choices & Rationale
+## Model Choices & Rationale
 
 | Stage     | Model                                                  | Why Chosen                                                |
 | --------- | ------------------------------------------------------ | --------------------------------------------------------- |
 | Embedding | `all-MiniLM-L6-v2`                                     | Fast, free, and better semantic accuracy vs Ollama/others |
 | Vector DB | Chroma                                                 | LangChain-compatible and local                            |
 | Reranker  | `amberoad/bert-multilingual-passage-reranking-msmarco` | High cross-lingual matching performance                   |
-| LLM       | LLaMA 3 via Ollama                                     | Local, tunable, gives structured reasoning                |
-
----
-
-##  Models We Tried But Rejected
-
-### Embeddings:
-
-* **Ollama’s nomic-embed-text**: Couldn’t match names like “Sita” vs “Seetha”
-* **OpenAI / Cohere**: Paid or rate-limited
-
-### Reranking:
-
-* **Only MMR**: Returned diverse but inaccurate results without deeper comparison
-
-### LLMs:
-
-* **Bespoke-mini-check**: Returned only True/False, no explanations
-* **Gemma 2B**: Struggled with structured outputs
-* **Osmosis / Nemotron Mini**: JSON structure was inconsistent or incorrect
-
----
-
-##  Future Improvements
-
-* Try newer and faster embedding models for better precision.
-* Improve UI of the Streamlit app version.
-* Enhance handling of near-similar verses to reduce false negatives.
-* Extend the system to other epics (e.g., Mahabharata) with minimal changes.
-
----
-
-##  Output Sample
-
-```json
-{
-  "prediction": "incorrect",
-  "reason": "The translated line misrepresents the speaker and context of the verse.",
-  "reference": "Sundara Kanda, Chapter 5, Verse 12",
-  "correction": "Hanuman did not say that; it was spoken by Ravana."
-}
-```
-
----
-
-This project was built using:
-
-* Python, Selenium, Pandas, Regex
-* HuggingFace Transformers
-* Chroma DB
-* LangChain
-* Ollama + LLaMA 3
-* [valmikiramayan.net](http://www.valmikiramayan.net) for source data
-
-```
-
-
-```
+| LLM       | LLaMA 3 via Ollama
